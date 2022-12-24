@@ -1,39 +1,77 @@
-def convert(n,k):
-    i = 0
-    ans = ""
-    while k**i <= n:
-        i+=1
-    for j in reversed(range(0,i)):
-        if n >= (k**j):
-            ans += str(int(n/(k**j)))
-            n = n - int(n/(k**j))*(k**j)
-        else:
-            ans += "0"
-    return ans
-def solution(n, k):
-    ch = set()
-    cv = convert(n, k)
-    q = ""
-    count = 0
-    for i in range(len(cv)):
-        if cv[i] == '0':
-            if q != "":
-                if int(q) in ch or prime_check(int(q)):
-                    ch.add(int(q))
-                    count += 1
-                q = ""
-        else:
-            q += cv[i]
+"""
+양의정수 n -> k진수
+변환된 수 안에 조건에 맞는 소수가 몇개인지
 
-    if q != "" and prime_check(int(q)):
-        count += 1
-    return count
-def prime_check(num):
-    if num == 0 or num == 1:
-        return False
-    #for i in range(2,(num//2)+1):
-    for i in range(2,int(num**(1/2))+1):
+"""
 
-        if num % i == 0:
-            return False
+
+def setIsPrime():
+    MAX_NUM = 60000001
+    isPrime = [True for i in range(MAX_NUM)]
+
+    isPrime[0] = False
+    isPrime[1] = False
+    isPrime[2] = True
+    for i in range(2,MAX_NUM):
+        if isPrime[i] == True:
+            for j in range(2,(MAX_NUM//(i))):
+                isPrime[i*j] = False
+    return isPrime
+
+def prime(n):
+    if n <= 1: return False
+    i = 2
+    while i*i <= n:
+        if n%i == 0: return False
+        i += 1
     return True
+    
+# 진수로 변환해주는 함수
+def getDigit(n, k):
+    digit = 0
+    num = 1
+    while n >= num:
+        num *= k
+        digit+=1
+    return digit # 자리수 4개
+
+def solution(n, k):
+
+
+    toDigit = ""
+    digit = getDigit(n,k)
+    while digit > 0:
+        digitNum = k**(digit-1)
+        if k**(digit-1) <= n:
+            toDigit += str((n//digitNum))
+            n -= ((n//digitNum)*digitNum)
+        else:
+            toDigit += '0'
+        digit -= 1
+        
+    # ------- 진수 변환 끝
+    """
+    0P0소수 양쪽에 0이 있는 경우
+    P0 소수 오른쪽에만 0이 있고 왼쪽에는 아무것도 없는 경우
+    0P 소수 왼쪽에만 0이 있고 오른쪽에는 아무것도 없는 경우
+    """
+    st = []
+    ans = 0
+    
+    for i in range(len(toDigit)):
+        if toDigit[i] != '0':
+            st.append(toDigit[i])
+        else:
+            if len(st) != 0:
+
+                if prime(int(''.join(st))):
+                    ans+=1
+                st = []
+
+    if len(st) != 0:
+        if prime(int("".join(st))):
+            ans+=1
+
+    return ans
+            
+            
