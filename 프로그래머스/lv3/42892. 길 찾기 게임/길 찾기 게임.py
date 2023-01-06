@@ -10,7 +10,7 @@
 부모노드를 체크하는게 중요할듯 
 """
 import sys
-sys.setrecursionlimit(2500)
+sys.setrecursionlimit(1006)
 global back
 global front
 def frontSearch(cur, childNode):
